@@ -3,1191 +3,1382 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spotnest — Smart Driveway Parking Platform</title>
+<title>Spotnest — Peer-to-Peer Driveway Parking Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<!-- Leaflet Map CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <style>
   :root {
-    --accent: #E8743B;
-    --accent-dark: #CC5C26;
-    --accent-light: #FDF1EA;
-    --bg: #F8F9FA;
-    --surface: #FFFFFF;
-    --text-primary: #111827;
-    --text-secondary: #4B5563;
-    --text-muted: #9CA3AF;
-    --border: #E5E7EB;
-    --green: #10B981;
-    --green-light: #ECFDF5;
-    --blue: #3B82F6;
-    --blue-light: #EFF6FF;
-    --purple: #8B5CF6;
-    --purple-light: #F5F3FF;
-    --radius: 14px;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --brand-primary: #FF5A36;
+    --brand-dark: #D93815;
+    --brand-subtle: #FFF2EE;
+    --navy-900: #0F172A;
+    --navy-800: #1E293B;
+    --navy-700: #334155;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-400: #94A3B8;
+    --emerald-600: #059669;
+    --emerald-50: #ECFDF5;
+    --amber-500: #F59E0B;
+    --blue-600: #2563EB;
+    --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --hover-shadow: 0 12px 30px -4px rgba(255, 90, 54, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
+    --radius-xl: 18px;
+    --radius-lg: 12px;
   }
-  * { box-sizing: border-box; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    margin: 0;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text-primary);
+    background: var(--gray-50);
+    color: var(--navy-900);
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
   }
 
-  /* Header Navigation */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0.75rem 1.75rem;
+  /* ----------------------------------------------------
+   * TOP NAVBAR
+   * -------------------------------------------------- */
+  .top-navbar {
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--gray-200);
+    height: 68px;
+    padding: 0 1.75rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: var(--shadow-sm);
-    z-index: 20;
+    z-index: 1000;
   }
-  .brand {
+  .brand-group {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
-  .brand-logo {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-    border-radius: 10px;
+  .brand-symbol {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-dark));
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 1.25rem;
-    font-weight: 800;
-    box-shadow: 0 2px 8px rgba(232, 116, 59, 0.35);
+    box-shadow: 0 4px 12px rgba(255, 90, 54, 0.35);
   }
-  .brand-text h1 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 800;
+  .brand-titles h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
     letter-spacing: -0.03em;
-    color: var(--text-primary);
+    color: var(--navy-900);
+    line-height: 1.1;
   }
-  .brand-text p {
-    margin: 0;
-    font-size: 0.72rem;
-    color: var(--text-secondary);
+  .brand-titles p {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    font-weight: 500;
   }
 
-  /* Portal Tab Switcher */
-  .portal-nav {
+  /* App Portal Segmented Control */
+  .portal-switch {
     display: flex;
-    background: #F3F4F6;
-    padding: 0.25rem;
-    border-radius: 30px;
-    gap: 0.25rem;
+    background: var(--gray-100);
+    padding: 4px;
+    border-radius: 100px;
+    gap: 4px;
   }
-  .portal-btn {
+  .nav-tab-btn {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 1.15rem;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
     border: none;
-    border-radius: 20px;
     background: transparent;
+    border-radius: 100px;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--navy-700);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .portal-btn:hover {
-    color: var(--text-primary);
+  .nav-tab-btn .material-symbols-outlined { font-size: 1.15rem; }
+  .nav-tab-btn:hover { color: var(--navy-900); }
+  .nav-tab-btn.active {
+    background: #FFFFFF;
+    color: var(--brand-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
-  .portal-btn.active {
-    background: var(--surface);
-    color: var(--accent-dark);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-  }
-  .portal-btn.active.owner {
-    color: #15803D;
-  }
-  .portal-btn.active.admin {
-    color: #4338CA;
-  }
+  .nav-tab-btn.active.owner-mode { color: var(--emerald-600); }
+  .nav-tab-btn.active.admin-mode { color: var(--blue-600); }
 
-  .header-actions {
+  .user-badge-group {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
   }
-  .status-badge {
-    background: var(--green-light);
-    color: var(--green);
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.35rem 0.75rem;
+  .network-pill {
+    background: var(--emerald-50);
+    border: 1px solid rgba(5, 150, 105, 0.2);
+    color: var(--emerald-600);
+    padding: 0.35rem 0.8rem;
     border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
-  .pulse-dot {
-    width: 7px;
-    height: 7px;
+  .pulsing-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    background: var(--emerald-600);
+    animation: pulse 2s infinite;
   }
-
-  /* Main Container Area */
-  main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .portal-view {
-    display: none;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .portal-view.active {
-    display: flex;
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
   }
 
   /* ----------------------------------------------------
-   * 1. USER VIEW: Concierge Chat & Browse
+   * WORKSPACE VIEWS
    * -------------------------------------------------- */
-  #user-view {
-    flex-direction: column;
-    height: 100%;
-  }
-  .user-content {
+  .workspace {
     flex: 1;
-    display: flex;
+    display: none;
     overflow: hidden;
   }
-  .chat-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    border-right: 1px solid var(--border);
-  }
-  #log {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    scroll-behavior: smooth;
-  }
-  .msg {
-    display: flex;
-    flex-direction: column;
-    animation: fadeIn 0.2s ease-out;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .msg.user { align-items: flex-end; }
-  .msg.agent { align-items: flex-start; }
-  .bubble {
-    display: inline-block;
-    padding: 0.95rem 1.25rem;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    text-align: left;
-    max-width: 85%;
-    white-space: pre-wrap;
-    box-shadow: var(--shadow-sm);
-    line-height: 1.55;
-    font-size: 0.94rem;
-  }
-  .msg.user .bubble {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 4px 10px rgba(232, 116, 59, 0.3);
-  }
-  .msg.agent .bubble { border-bottom-left-radius: 4px; }
-  .bubble.rich {
-    background: transparent;
-    border: none;
-    padding: 0;
-    max-width: 100%;
-    white-space: normal;
-    box-shadow: none;
-  }
+  .workspace.active { display: flex; }
 
-  .chat-footer {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 1rem 1.5rem;
+  /* ----------------------------------------------------
+   * 1. DRIVER DASHBOARD (Marketplace + Map + AI Assistant)
+   * -------------------------------------------------- */
+  #driver-workspace {
+    display: none;
+    flex-direction: row;
+    height: calc(100vh - 68px);
   }
-  .examples-bar {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    overflow-x: auto;
-    padding-bottom: 0.2rem;
-    scrollbar-width: none;
-  }
-  .examples-bar::-webkit-scrollbar { display: none; }
-  .prompt-chip {
-    background: #F3F4F6;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 0.45rem 0.85rem;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s ease-in-out;
-  }
-  .prompt-chip:hover {
-    border-color: var(--accent);
-    background: var(--accent-light);
-    color: var(--accent-dark);
-  }
-  .chat-form {
-    display: flex;
-    gap: 0.75rem;
-  }
-  .chat-input {
-    flex: 1;
-    padding: 0.85rem 1.25rem;
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    background: #F9FAFB;
-    outline: none;
-    transition: all 0.2s ease;
-  }
-  .chat-input:focus {
-    border-color: var(--accent);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(232, 116, 59, 0.12);
-  }
-  .send-btn {
-    padding: 0.85rem 1.6rem;
-    border: none;
-    border-radius: 28px;
-    background: var(--accent);
-    color: #fff;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 2px 6px rgba(232, 116, 59, 0.35);
-  }
-  .send-btn:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  #driver-workspace.active { display: flex; }
 
-  /* User Spot Browser Side Panel */
-  .browse-sidebar {
-    width: 360px;
-    background: #FAFAFA;
+  /* Listings Pane (Left) */
+  .driver-catalog-pane {
+    width: 440px;
+    min-width: 400px;
+    background: #FFFFFF;
+    border-right: 1px solid var(--gray-200);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    z-index: 10;
+  }
+  .catalog-controls {
     padding: 1.25rem;
-    gap: 1rem;
-  }
-  .sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .sidebar-header h2 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    margin: 0;
-  }
-  .spots-grid {
+    border-bottom: 1px solid var(--gray-200);
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
   }
-  .spot-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+  .search-input-box {
+    display: flex;
+    align-items: center;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 0.65rem 0.95rem;
+    gap: 0.6rem;
+  }
+  .search-input-box input {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.92rem;
+    color: var(--navy-900);
+    outline: none;
+    width: 100%;
+  }
+  .filter-chips-row {
+    display: flex;
+    gap: 0.45rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-chips-row::-webkit-scrollbar { display: none; }
+  .chip-btn {
+    border: 1px solid var(--gray-200);
+    background: #FFFFFF;
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--navy-700);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .chip-btn:hover, .chip-btn.active {
+    border-color: var(--brand-primary);
+    background: var(--brand-subtle);
+    color: var(--brand-primary);
+  }
+
+  .catalog-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
   }
-  .spot-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-  .spot-card-top {
+  .spot-entry-card {
+    background: #FFFFFF;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
   }
-  .spot-title {
-    font-weight: 700;
-    font-size: 0.98rem;
-    margin: 0;
-    color: var(--text-primary);
+  .spot-entry-card:hover, .spot-entry-card.selected {
+    border-color: var(--brand-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--hover-shadow);
   }
-  .spot-rate {
+  .card-media {
+    height: 140px;
+    background: var(--gray-100);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .media-badge-rate {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    color: #FFFFFF;
     font-weight: 800;
-    font-size: 1.05rem;
-    color: var(--accent);
-    white-space: nowrap;
+    font-size: 0.95rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 100px;
   }
-  .spot-address {
-    font-size: 0.82rem;
-    color: var(--text-secondary);
+  .media-badge-walk {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    color: var(--navy-900);
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 100px;
     display: flex;
     align-items: center;
     gap: 0.25rem;
   }
-  .spot-tags {
+  .card-details {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .spot-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--navy-900);
+  }
+  .spot-rating {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--amber-500);
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .spot-addr {
+    font-size: 0.83rem;
+    color: var(--navy-700);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .tag-pill-row {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
+    margin-top: 0.35rem;
   }
-  .tag {
-    background: #F3F4F6;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
+  .tag-pill {
+    background: var(--gray-100);
+    color: var(--navy-700);
     font-size: 0.72rem;
-    color: var(--text-secondary);
-    font-weight: 500;
+    font-weight: 600;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
   }
-  .tag.green {
-    background: var(--green-light);
-    color: var(--green);
-    font-weight: 700;
+  .card-action-bar {
+    margin-top: 0.6rem;
+    display: flex;
+    gap: 0.5rem;
   }
-  .book-quick-btn {
-    margin-top: 0.25rem;
-    padding: 0.55rem;
-    background: var(--text-primary);
+  .btn-book-instant {
+    flex: 1;
+    background: var(--brand-primary);
     color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    padding: 0.6rem;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
     cursor: pointer;
     transition: background 0.15s ease;
   }
-  .book-quick-btn:hover { background: var(--accent); }
+  .btn-book-instant:hover { background: var(--brand-dark); }
+  .btn-inspect {
+    background: var(--gray-100);
+    color: var(--navy-900);
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Center Map Pane */
+  .driver-map-pane {
+    flex: 1;
+    position: relative;
+    background: #e5e3df;
+  }
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Right AI Assistant Slide-Out Panel */
+  .ai-copilot-pane {
+    width: 380px;
+    background: #FFFFFF;
+    border-left: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+  }
+  .copilot-header {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .copilot-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+  }
+  .copilot-chat-feed {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .copilot-input-area {
+    padding: 1rem;
+    border-top: 1px solid var(--gray-200);
+    background: #FFFFFF;
+  }
+  .copilot-form {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .copilot-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    outline: none;
+    background: var(--gray-50);
+  }
+  .copilot-input:focus { border-color: var(--brand-primary); background: #fff; }
+  .copilot-send {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .copilot-send:hover { background: var(--brand-dark); }
 
   /* ----------------------------------------------------
-   * 2. OWNER VIEW: Host Driveway Listing Portal
+   * 2. DRIVEWAY OWNER WORKSPACE
    * -------------------------------------------------- */
-  #owner-view {
-    padding: 2rem;
+  #owner-workspace {
+    flex-direction: column;
     overflow-y: auto;
-    background: #F9FAFB;
+    padding: 2.25rem;
+    background: var(--gray-50);
   }
-  .owner-container {
-    max-width: 900px;
+  .owner-layout {
+    max-width: 1100px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 2rem;
   }
-  .section-hero {
-    background: linear-gradient(135deg, #15803D, #166534);
-    color: #fff;
-    border-radius: 16px;
-    padding: 2rem;
+  .owner-hero-banner {
+    background: linear-gradient(135deg, #064E3B 0%, #047857 100%);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem;
+    color: #FFFFFF;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.25);
   }
-  .section-hero h2 { margin: 0 0 0.5rem 0; font-size: 1.6rem; font-weight: 800; }
-  .section-hero p { margin: 0; opacity: 0.9; font-size: 0.95rem; }
-
-  .owner-cards-layout {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 1.5rem;
-  }
-  .panel-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.75rem;
-    box-shadow: var(--shadow-sm);
-  }
-  .panel-card h3 {
-    margin: 0 0 1.25rem 0;
-    font-size: 1.2rem;
+  .hero-text h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
     font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .hero-text p {
+    font-size: 1.05rem;
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  .hero-metric-box {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    text-align: right;
+  }
+  .metric-large {
+    font-size: 2.6rem;
+    font-weight: 800;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .metric-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .owner-grid-2col {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.75rem;
+  }
+  .app-card {
+    background: #FFFFFF;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+  }
+  .app-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
-  .form-group {
-    margin-bottom: 1.1rem;
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .field-group {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
   }
-  .form-group label {
+  .field-group label {
     font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-weight: 700;
+    color: var(--navy-700);
   }
-  .form-group input, .form-group select {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 10px;
+  .field-group input, .field-group select {
+    padding: 0.85rem 1.15rem;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
-    transition: border 0.15s ease;
+    transition: all 0.2s ease;
   }
-  .form-group input:focus, .form-group select:focus {
-    border-color: #15803D;
+  .field-group input:focus, .field-group select:focus {
+    border-color: var(--emerald-600);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
   }
-  .submit-owner-btn {
+  .btn-submit-host {
     width: 100%;
-    padding: 0.85rem;
-    background: #15803D;
-    color: #fff;
+    padding: 1rem;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
+    background: var(--emerald-600);
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: 1.05rem;
     font-weight: 700;
-    font-size: 1rem;
     cursor: pointer;
-    transition: background 0.15s ease;
-    margin-top: 0.5rem;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+    transition: all 0.15s ease;
   }
-  .submit-owner-btn:hover { background: #166534; }
+  .btn-submit-host:hover { background: #047857; transform: translateY(-1px); }
 
-  /* Owner Active Spots List */
-  .my-spots-list {
+  .my-spots-container {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.9rem;
   }
-  .my-spot-item {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.85rem 1rem;
+  .host-spot-item {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #FAFAFA;
+    background: var(--gray-50);
   }
+  .host-spot-title { font-weight: 700; font-size: 1rem; color: var(--navy-900); }
+  .host-spot-sub { font-size: 0.8rem; color: var(--gray-400); margin-top: 0.2rem; }
+  .host-spot-rate { font-weight: 800; font-size: 1.1rem; color: var(--emerald-600); }
 
   /* ----------------------------------------------------
-   * 3. ADMIN VIEW: Dashboard, Bookings, & Stats
+   * 3. ADMIN OPERATIONS WORKSPACE
    * -------------------------------------------------- */
-  #admin-view {
-    padding: 2rem;
+  #admin-workspace {
+    flex-direction: column;
     overflow-y: auto;
-    background: #F9FAFB;
+    padding: 2.25rem;
+    background: var(--gray-50);
   }
-  .admin-container {
-    max-width: 1050px;
+  .admin-layout {
+    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 2rem;
   }
-  .stats-row {
+  .admin-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .admin-header-row h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+  }
+  .kpi-deck {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    gap: 1.25rem;
   }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: var(--shadow-sm);
+  .kpi-tile {
+    background: #FFFFFF;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
   }
-  .stat-card-label {
+  .kpi-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-400);
+  }
+  .kpi-metric {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--navy-900);
+  }
+  .kpi-sub {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .stat-card-val {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--text-primary);
-  }
-  .stat-card-sub {
-    font-size: 0.75rem;
-    color: var(--green);
-    font-weight: 600;
+    color: var(--emerald-600);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
-  .table-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
+  .data-ledger-card {
+    background: #FFFFFF;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    box-shadow: var(--card-shadow);
   }
-  .table-panel h3 {
-    margin: 0 0 1rem 0;
-    font-size: 1.15rem;
+  .data-ledger-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
     font-weight: 700;
+    margin-bottom: 1.25rem;
   }
-  table {
+  .styled-table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.92rem;
+  }
+  .styled-table th {
+    background: var(--gray-50);
+    padding: 0.95rem 1.2rem;
+    color: var(--navy-700);
+    font-weight: 700;
     text-align: left;
+    border-bottom: 2px solid var(--gray-200);
   }
-  th {
-    padding: 0.75rem 1rem;
-    background: #F9FAFB;
-    color: var(--text-secondary);
-    font-weight: 600;
-    border-bottom: 1px solid var(--border);
+  .styled-table td {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--navy-900);
   }
-  td {
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-primary);
-  }
-  tr:last-child td { border-bottom: none; }
-  .badge {
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
     font-size: 0.75rem;
     font-weight: 700;
-    display: inline-block;
   }
-  .badge-confirmed { background: var(--green-light); color: var(--green); }
-  .badge-active { background: var(--blue-light); color: var(--blue); }
+  .status-tag.confirmed { background: var(--emerald-50); color: var(--emerald-600); }
+  .status-tag.available { background: #EFF6FF; color: var(--blue-600); }
 
   /* ----------------------------------------------------
-   * A2UI Mini-Renderer Components
+   * BOOKING MODAL
    * -------------------------------------------------- */
-  .a2card {
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.15rem;
-    background: #fff;
-    box-shadow: var(--shadow-md);
-    max-width: 100%;
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
   }
-  .a2col { display: flex; flex-direction: column; gap: 0.45rem; }
-  .a2row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-  .a2row.between { justify-content: space-between; }
-  .a2text { margin: 0; line-height: 1.45; }
-  .a2text.a2-h1 { font-size: 1.35rem; font-weight: 700; color: var(--text-primary); }
-  .a2text.a2-h2 { font-size: 1.15rem; font-weight: 700; color: var(--accent-dark); }
-  .a2text.a2-h3 { font-size: 1rem; font-weight: 600; }
-  .a2text.a2-caption { font-size: 0.82rem; color: var(--text-secondary); }
-  .a2divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0; width: 100%; }
-  .a2img { max-width: 100%; border-radius: 10px; display: block; object-fit: cover; }
-  .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-size: 1.25rem; line-height: 1; vertical-align: middle; }
+  .modal-backdrop.open { display: flex; }
+  .booking-modal-box {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    width: 480px;
+    max-width: 90%;
+    padding: 2rem;
+    box-shadow: 0 20px 40px -6px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .modal-header-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-close-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--gray-400);
+  }
+
+  /* Chat bubble styling for Copilot */
+  .copilot-bubble {
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .copilot-bubble.user {
+    background: var(--brand-primary);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+  }
+  .copilot-bubble.agent {
+    background: var(--gray-100);
+    color: var(--navy-900);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+  }
 </style>
 </head>
 <body>
 
-<!-- Header with Portal Tab Switcher -->
-<header>
-  <div class="brand">
-    <div class="brand-logo">P</div>
-    <div class="brand-text">
+<!-- TOP APPLICATION NAVBAR -->
+<header class="top-navbar">
+  <div class="brand-group">
+    <div class="brand-symbol">
+      <span class="material-symbols-outlined" style="font-size:1.6rem;">local_parking</span>
+    </div>
+    <div class="brand-titles">
       <h1>Spotnest</h1>
-      <p>Smarter parking, powered by your driveway</p>
+      <p>Neighborhood Driveway Parking Marketplace</p>
     </div>
   </div>
 
-  <!-- Role Interface Switcher -->
-  <div class="portal-nav">
-    <button class="portal-btn active" onclick="switchPortal('user')">
-      <span class="material-symbols-outlined" style="font-size:1.1rem;">directions_car</span>
-      Driver View
+  <!-- Role Workspace Selector -->
+  <div class="portal-switch">
+    <button id="tab-driver" class="nav-tab-btn active" onclick="activateWorkspace('driver')">
+      <span class="material-symbols-outlined">directions_car</span>
+      Driver Marketplace
     </button>
-    <button class="portal-btn" onclick="switchPortal('owner')">
-      <span class="material-symbols-outlined" style="font-size:1.1rem;">garage_home</span>
-      Owner Portal
+    <button id="tab-owner" class="nav-tab-btn" onclick="activateWorkspace('owner')">
+      <span class="material-symbols-outlined">garage_home</span>
+      Homeowner Portal
     </button>
-    <button class="portal-btn" onclick="switchPortal('admin')">
-      <span class="material-symbols-outlined" style="font-size:1.1rem;">admin_panel_settings</span>
-      Admin Dashboard
+    <button id="tab-admin" class="nav-tab-btn" onclick="activateWorkspace('admin')">
+      <span class="material-symbols-outlined">dashboard</span>
+      Admin Operations
     </button>
   </div>
 
-  <div class="header-actions">
-    <div class="status-badge">
-      <span class="pulse-dot"></span>
-      <span>A2A Connected</span>
+  <div class="user-badge-group">
+    <div class="network-pill">
+      <span class="pulsing-dot"></span>
+      <span>Firestore &amp; A2A Live</span>
     </div>
   </div>
 </header>
 
-<main>
-  <!-- ==========================================
-       INTERFACE 1: DRIVER / USER PORTAL
-       ========================================== -->
-  <div id="user-view" class="portal-view active">
-    <div class="user-content">
-      <!-- Left: Intelligent Chat Concierge -->
-      <div class="chat-column">
-        <div id="log">
-          <div class="msg agent">
-            <div class="bubble">
-              🚗 Welcome to <strong>Spotnest</strong>! I can help you search neighborhood driveways, calculate exact walking distance, inspect dimensions, check parking weather, and book spots.
-            </div>
-          </div>
-        </div>
-
-        <div class="chat-footer">
-          <div class="examples-bar">
-            <div class="prompt-chip" onclick="sendPrompt('Find parking near Downtown under $10/hr with short walking distance')">
-              🚗 Find Downtown spots (&lt; $10/hr)
-            </div>
-            <div class="prompt-chip" onclick="sendPrompt('Show details and dimensions for the Maple Ave driveway')">
-              📐 Maple Ave details &amp; dimensions
-            </div>
-            <div class="prompt-chip" onclick="sendPrompt('Can you generate a photo preview of the Maple Ave driveway?')">
-              📸 Generate driveway photo
-            </div>
-            <div class="prompt-chip" onclick="sendPrompt('Generate a 4-second video walkthrough of the driveway spot')">
-              🎬 Generate driveway video
-            </div>
-          </div>
-
-          <form id="chat-form" class="chat-form" onsubmit="handleChatSubmit(event)">
-            <input id="chat-input" class="chat-input" placeholder="Ask about driveway parking or list your spot…" autocomplete="off" autofocus>
-            <button class="send-btn">Send</button>
-          </form>
-        </div>
+<!-- WORKSPACE 1: DRIVER MARKETPLACE -->
+<div id="driver-workspace" class="workspace active">
+  <!-- Left Column: Driveway Directory & Fast Filters -->
+  <div class="driver-catalog-pane">
+    <div class="catalog-controls">
+      <div class="search-input-box">
+        <span class="material-symbols-outlined" style="color:var(--gray-400);">search</span>
+        <input id="spot-search-input" placeholder="Search address, venue, or neighborhood…" oninput="filterSpots()">
       </div>
-
-      <!-- Right: Live Driveway Directory & Fast Booking -->
-      <div class="browse-sidebar">
-        <div class="sidebar-header">
-          <h2>Driveway Spots</h2>
-          <span class="tag green" id="spots-count-tag">Loading...</span>
-        </div>
-        <div id="spots-directory" class="spots-grid">
-          <!-- Populated dynamically via /api/spots -->
-        </div>
+      <div class="filter-chips-row">
+        <button class="chip-btn active" onclick="setPriceFilter(null, this)">All Spots</button>
+        <button class="chip-btn" onclick="setPriceFilter(10, this)">Under $10/hr</button>
+        <button class="chip-btn" onclick="setPriceFilter(8, this)">Under $8/hr</button>
+        <button class="chip-btn" onclick="filterByFeature('EV', this)">⚡ EV Ready</button>
+        <button class="chip-btn" onclick="filterByFeature('Covered', this)">🛡️ Carport</button>
       </div>
+    </div>
+
+    <div id="catalog-list" class="catalog-scrollable">
+      <!-- Dynamically generated spot cards -->
     </div>
   </div>
 
-  <!-- ==========================================
-       INTERFACE 2: DRIVEWAY OWNER PORTAL
-       ========================================== -->
-  <div id="owner-view" class="portal-view">
-    <div class="owner-container">
-      <div class="section-hero">
-        <div>
-          <h2>🏡 Homeowner Host Portal</h2>
-          <p>Turn your unused driveway, carport, or side-yard into effortless passive income.</p>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:2.2rem; font-weight:800;">$240+</div>
-          <div style="font-size:0.85rem; opacity:0.85;">Avg monthly host earnings</div>
-        </div>
-      </div>
+  <!-- Center: Interactive Live Map -->
+  <div class="driver-map-pane">
+    <div id="map"></div>
+  </div>
 
-      <div class="owner-cards-layout">
-        <!-- New Spot Creation Form -->
-        <div class="panel-card">
-          <h3><span class="material-symbols-outlined" style="color:#15803D;">add_circle</span> List Your Driveway</h3>
-          <form id="host-form" onsubmit="handleHostSubmit(event)">
-            <div class="form-group">
-              <label>Driveway Title</label>
-              <input id="host-title" placeholder="e.g. Pine St Paved Wide Carport" required>
-            </div>
-            <div class="form-group">
-              <label>Street Address</label>
-              <input id="host-address" placeholder="e.g. 742 Evergreen Terrace, Downtown" required>
-            </div>
-            <div class="form-group">
+  <!-- Right: Spotnest Intelligent Concierge -->
+  <div class="ai-copilot-pane">
+    <div class="copilot-header">
+      <div class="copilot-title">
+        <span class="material-symbols-outlined" style="color:var(--brand-primary);">auto_awesome</span>
+        <span>AI Parking Concierge</span>
+      </div>
+      <span style="font-size:0.75rem; color:var(--emerald-600); font-weight:700;">● Online</span>
+    </div>
+
+    <div id="copilot-feed" class="copilot-chat-feed">
+      <div class="copilot-bubble agent">
+        👋 Hi! I'm your Spotnest Concierge. You can ask me to calculate walking times, check weather advisories, or synthesize photorealistic driveway photos &amp; videos.
+      </div>
+    </div>
+
+    <div class="copilot-input-area">
+      <form class="copilot-form" onsubmit="handleCopilotSubmit(event)">
+        <input id="copilot-input" class="copilot-input" placeholder="Ask AI concierge or request photos…" autocomplete="off">
+        <button type="submit" class="copilot-send">
+          <span class="material-symbols-outlined" style="font-size:1.2rem;">arrow_upward</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSPACE 2: HOMEOWNER PORTAL -->
+<div id="owner-workspace" class="workspace">
+  <div class="owner-layout">
+    <div class="owner-hero-banner">
+      <div class="hero-text">
+        <h2>Monetize Your Driveway</h2>
+        <p>Turn your unused parking space, carport, or side-yard into reliable passive income while helping your local neighborhood community.</p>
+      </div>
+      <div class="hero-metric-box">
+        <div class="metric-large">$240.00</div>
+        <div class="metric-label">Estimated Monthly Host Earnings</div>
+      </div>
+    </div>
+
+    <div class="owner-grid-2col">
+      <!-- Publish Form -->
+      <div class="app-card">
+        <h3><span class="material-symbols-outlined" style="color:var(--emerald-600);">add_location_alt</span> Register New Driveway</h3>
+        <form id="owner-publish-form" onsubmit="handleOwnerPublish(event)">
+          <div class="field-group">
+            <label>Driveway Title / Identifier</label>
+            <input id="host-title" placeholder="e.g. Pine St Paved Wide Carport" required>
+          </div>
+          <div class="field-group">
+            <label>Full Physical Street Address</label>
+            <input id="host-address" placeholder="e.g. 742 Evergreen Terrace, Downtown" required>
+          </div>
+          <div class="form-row-2">
+            <div class="field-group">
               <label>Hourly Rate ($ USD)</label>
               <input id="host-rate" type="number" step="0.5" value="8.0" min="2" max="50" required>
             </div>
-            <div class="form-group">
-              <label>Host Name</label>
+            <div class="field-group">
+              <label>Host Full Name</label>
               <input id="host-name" placeholder="e.g. Sarah Jenkins" required>
             </div>
-            <div class="form-group">
-              <label>Amenities / Vehicle Clearance</label>
-              <select id="host-feature">
-                <option value="EV Charging Available · Paved Driveway">EV Charging Available · Paved Driveway</option>
-                <option value="Covered Carport · Shaded">Covered Carport · Shaded</option>
-                <option value="Extra Wide · Fits Full-Size SUVs">Extra Wide · Fits Full-Size SUVs</option>
-                <option value="Security Camera Monitored">Security Camera Monitored</option>
-              </select>
-            </div>
-            <button type="submit" class="submit-owner-btn">Publish Driveway Spot</button>
-          </form>
-        </div>
-
-        <!-- Host's Active Listings & Tips -->
-        <div class="panel-card">
-          <h3><span class="material-symbols-outlined" style="color:#15803D;">home_work</span> Your Active Spots</h3>
-          <div id="host-spots-list" class="my-spots-list">
-            <!-- Populated dynamically from /api/spots -->
           </div>
-
-          <div style="margin-top:1.5rem; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:1rem;">
-            <div style="font-weight:700; color:#166534; margin-bottom:0.3rem;">💡 Host Best Practices</div>
-            <div style="font-size:0.83rem; color:#14532D; line-height:1.45;">
-              Clear any garden hoses or leaves from the driveway. Adding EV charging increases driver booking frequency by 3x!
-            </div>
+          <div class="field-group">
+            <label>Driveway Clearance &amp; Amenities</label>
+            <select id="host-amenity">
+              <option value="EV Charging Available · Paved Driveway">EV Charging Available · Paved Driveway</option>
+              <option value="Covered Carport · Shaded">Covered Carport · Shaded</option>
+              <option value="Extra Wide · Fits Full-Size SUVs">Extra Wide · Fits Full-Size SUVs</option>
+              <option value="Security Camera Monitored">Security Camera Monitored</option>
+            </select>
           </div>
+          <button type="submit" class="btn-submit-host">Publish Spot to Marketplace</button>
+        </form>
+      </div>
+
+      <!-- Active Spots Panel -->
+      <div class="app-card">
+        <h3><span class="material-symbols-outlined" style="color:var(--emerald-600);">home_work</span> Your Active Spots</h3>
+        <div id="host-spots-list" class="my-spots-container">
+          <!-- Populated from /api/spots -->
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ==========================================
-       INTERFACE 3: ADMIN & ANALYTICS DASHBOARD
-       ========================================== -->
-  <div id="admin-view" class="portal-view">
-    <div class="admin-container">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h2 style="margin:0; font-size:1.6rem; font-weight:800;">⚙️ Spotnest Admin Operations</h2>
-          <p style="margin:0.25rem 0 0 0; color:var(--text-secondary); font-size:0.9rem;">Platform metrics, reservation ledgers, and inventory controls.</p>
-        </div>
-        <button onclick="loadAdminData()" class="prompt-chip" style="background:#fff; cursor:pointer;">
-          <span class="material-symbols-outlined" style="font-size:1rem;">sync</span> Refresh Data
-        </button>
+<!-- WORKSPACE 3: ADMIN & OPERATIONS -->
+<div id="admin-workspace" class="workspace">
+  <div class="admin-layout">
+    <div class="admin-header-row">
+      <div>
+        <h2>Platform Operations &amp; Analytics</h2>
+        <p style="color:var(--navy-700); font-size:0.95rem;">Real-time Firestore sync, booking ledger, and inventory controls.</p>
       </div>
+      <button class="chip-btn" onclick="loadAdminStats()" style="display:flex; align-items:center; gap:0.4rem; padding:0.6rem 1rem;">
+        <span class="material-symbols-outlined" style="font-size:1rem;">refresh</span> Sync Data
+      </button>
+    </div>
 
-      <!-- Quick Platform Stats -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-card-label">Active Listings</div>
-          <div class="stat-card-val" id="stat-spots">-</div>
-          <div class="stat-card-sub">In Firestore</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Total Reservations</div>
-          <div class="stat-card-val" id="stat-bookings">-</div>
-          <div class="stat-card-sub">Driver bookings</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">Platform Gross</div>
-          <div class="stat-card-val" id="stat-revenue">$0.00</div>
-          <div class="stat-card-sub">Calculated revenue</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-label">AI Omni Media</div>
-          <div class="stat-card-val">Live</div>
-          <div class="stat-card-sub">GCS Bucket Ready</div>
-        </div>
+    <!-- Platform KPI Deck -->
+    <div class="kpi-deck">
+      <div class="kpi-tile">
+        <div class="kpi-title">Active Driveway Listings</div>
+        <div class="kpi-metric" id="kpi-total-spots">-</div>
+        <div class="kpi-sub">● Real-time Firestore</div>
       </div>
-
-      <!-- Recent Reservations Ledger -->
-      <div class="table-panel">
-        <h3>Recent Bookings Ledger</h3>
-        <table id="bookings-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Spot</th>
-              <th>Driver</th>
-              <th>Duration</th>
-              <th>Total Cost</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="bookings-tbody">
-            <!-- Dynamically populated -->
-          </tbody>
-        </table>
+      <div class="kpi-tile">
+        <div class="kpi-title">Completed Reservations</div>
+        <div class="kpi-metric" id="kpi-total-bookings">-</div>
+        <div class="kpi-sub">● Driver bookings</div>
       </div>
-
-      <!-- All Inventory Table -->
-      <div class="table-panel">
-        <h3>Platform Driveway Inventory</h3>
-        <table id="inventory-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Address</th>
-              <th>Rate / hr</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="inventory-tbody">
-            <!-- Dynamically populated -->
-          </tbody>
-        </table>
+      <div class="kpi-tile">
+        <div class="kpi-title">Gross Marketplace GMV</div>
+        <div class="kpi-metric" id="kpi-total-revenue">$0.00</div>
+        <div class="kpi-sub">● Processed revenue</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-title">AI Omni Video / Photo</div>
+        <div class="kpi-metric">Online</div>
+        <div class="kpi-sub">● GCS Bucket Active</div>
       </div>
     </div>
+
+    <!-- Driver Bookings Ledger Table -->
+    <div class="data-ledger-card">
+      <h3>Driver Bookings Ledger</h3>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Spot Name</th>
+            <th>Driver</th>
+            <th>Duration</th>
+            <th>Amount Paid</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="admin-bookings-table">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Inventory Ledger Table -->
+    <div class="data-ledger-card">
+      <h3>Driveway Inventory</h3>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Spot ID</th>
+            <th>Title</th>
+            <th>Address</th>
+            <th>Hourly Rate</th>
+            <th>Availability</th>
+          </tr>
+        </thead>
+        <tbody id="admin-inventory-table">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+    </div>
   </div>
-</main>
+</div>
+
+<!-- INSTANT BOOKING MODAL DIALOG -->
+<div id="booking-modal" class="modal-backdrop">
+  <div class="booking-modal-box">
+    <div class="modal-header-group">
+      <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700;">Confirm Spot Reservation</h3>
+      <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
+    </div>
+    <div id="modal-spot-summary" style="background:var(--gray-50); padding:1rem; border-radius:var(--radius-lg); border:1px solid var(--gray-200);">
+      <div id="modal-spot-name" style="font-weight:700; font-size:1.05rem;">-</div>
+      <div id="modal-spot-addr" style="font-size:0.85rem; color:var(--gray-400); margin-top:0.2rem;">-</div>
+    </div>
+
+    <form onsubmit="submitModalBooking(event)">
+      <div class="field-group">
+        <label>Driver Full Name</label>
+        <input id="modal-driver-name" value="Nagamani Driver" required>
+      </div>
+      <div class="field-group">
+        <label>Reservation Duration (Hours)</label>
+        <select id="modal-duration" onchange="calculateModalTotal()">
+          <option value="1">1 Hour</option>
+          <option value="2" selected>2 Hours</option>
+          <option value="3">3 Hours</option>
+          <option value="4">4 Hours</option>
+          <option value="8">Full Day (8 Hours)</option>
+        </select>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin:1rem 0; padding-top:1rem; border-top:1px solid var(--gray-200);">
+        <span style="font-weight:700; color:var(--navy-700);">Total Cost</span>
+        <span id="modal-total-price" style="font-size:1.4rem; font-weight:800; color:var(--brand-primary);">$16.00</span>
+      </div>
+
+      <button type="submit" class="btn-book-instant" style="width:100%; padding:0.9rem; font-size:1rem;">Confirm &amp; Reserve Now</button>
+    </form>
+  </div>
+</div>
 
 <script>
-let currentPortal = 'user';
-const log = document.getElementById("log");
-const chatForm = document.getElementById("chat-form");
-const chatInput = document.getElementById("chat-input");
+let allSpots = [];
+let filteredSpots = [];
+let activePriceFilter = null;
+let activeFeatureFilter = null;
+let leafletMap = null;
+let mapMarkers = [];
+let activeBookingSpot = null;
 
-function switchPortal(portal) {
-  currentPortal = portal;
-  document.querySelectorAll('.portal-btn').forEach(btn => btn.classList.remove('active', 'owner', 'admin'));
-  document.querySelectorAll('.portal-view').forEach(view => view.classList.remove('active'));
-
-  const activeBtn = Array.from(document.querySelectorAll('.portal-btn')).find(b => b.textContent.toLowerCase().includes(portal));
-  if (activeBtn) {
-    activeBtn.classList.add('active');
-    if (portal === 'owner') activeBtn.classList.add('owner');
-    if (portal === 'admin') activeBtn.classList.add('admin');
-  }
-
-  const activeView = document.getElementById(`${portal}-view`);
-  if (activeView) activeView.classList.add('active');
-
-  if (portal === 'user') loadSpots();
-  if (portal === 'owner') loadOwnerData();
-  if (portal === 'admin') loadAdminData();
+// Initialize Leaflet Map
+function initMap() {
+  if (leafletMap) return;
+  leafletMap = L.map('map').setView([37.7749, -122.4194], 14);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    maxZoom: 19
+  }).addTo(leafletMap);
 }
 
-/* ----------------------------------------------------
- * DATA FETCHING & UI POPULATION
- * -------------------------------------------------- */
-let cachedSpots = [];
-let cachedBookings = [];
+function updateMapMarkers(spots) {
+  if (!leafletMap) return;
+  mapMarkers.forEach(m => leafletMap.removeLayer(m));
+  mapMarkers = [];
 
-async function loadSpots() {
+  const bounds = [];
+  spots.forEach(spot => {
+    const lat = (spot.coordinates && spot.coordinates.latitude) || 37.7749 + (Math.random() - 0.5) * 0.03;
+    const lng = (spot.coordinates && spot.coordinates.longitude) || -122.4194 + (Math.random() - 0.5) * 0.03;
+
+    const iconHtml = `
+      <div style="background:#FF5A36; color:#fff; font-weight:800; font-size:12px; padding:4px 8px; border-radius:20px; box-shadow:0 3px 8px rgba(0,0,0,0.3); border:2px solid #fff; white-space:nowrap;">
+        $${spot.hourly_rate}/hr
+      </div>
+    `;
+    const customIcon = L.divIcon({ html: iconHtml, className: '', iconSize: [50, 24], iconAnchor: [25, 12] });
+    const marker = L.marker([lat, lng], { icon: customIcon }).addTo(leafletMap);
+
+    marker.bindPopup(`
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; padding:4px;">
+        <div style="font-weight:700; font-size:14px;">${spot.title}</div>
+        <div style="font-size:12px; color:#64748B;">${spot.address}</div>
+        <div style="margin-top:6px; font-weight:800; color:#FF5A36;">$${spot.hourly_rate}/hr · ${spot.walking_minutes || 4} min walk</div>
+        <button onclick="openBookingModal('${spot.spot_id}')" style="margin-top:8px; width:100%; background:#FF5A36; color:#fff; border:none; padding:6px; border-radius:6px; font-weight:700; cursor:pointer;">Reserve This Spot</button>
+      </div>
+    `);
+
+    mapMarkers.push(marker);
+    bounds.push([lat, lng]);
+  });
+
+  if (bounds.length > 0) {
+    leafletMap.fitBounds(bounds, { padding: [40, 40] });
+  }
+}
+
+// Workspace Navigation
+function activateWorkspace(workspace) {
+  document.querySelectorAll('.workspace').forEach(w => w.classList.remove('active'));
+  document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active', 'owner-mode', 'admin-mode'));
+
+  document.getElementById(`${workspace}-workspace`).classList.add('active');
+  const btn = document.getElementById(`tab-${workspace}`);
+  btn.classList.add('active');
+  if (workspace === 'owner') btn.classList.add('owner-mode');
+  if (workspace === 'admin') btn.classList.add('admin-mode');
+
+  if (workspace === 'driver') {
+    setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 200);
+  }
+  if (workspace === 'owner') loadOwnerData();
+  if (workspace === 'admin') loadAdminStats();
+}
+
+// Fetch spots from backend
+async function fetchSpots() {
   try {
     const res = await fetch('/api/spots');
     const data = await res.json();
-    cachedSpots = data.spots || [];
-    renderSpotsSidebar(cachedSpots);
-  } catch (e) {
-    console.error("Failed to load spots:", e);
+    allSpots = data.spots || [];
+    filteredSpots = [...allSpots];
+    renderCatalog(filteredSpots);
+    updateMapMarkers(filteredSpots);
+  } catch (err) {
+    console.error("Failed to load spots:", err);
   }
 }
 
-function renderSpotsSidebar(spots) {
-  const container = document.getElementById('spots-directory');
-  const countTag = document.getElementById('spots-count-tag');
-  countTag.textContent = `${spots.length} Available`;
+function renderCatalog(spots) {
+  const container = document.getElementById('catalog-list');
   container.innerHTML = '';
+
+  if (spots.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:2rem; color:var(--gray-400);">No driveway spots match your filters.</div>`;
+    return;
+  }
 
   spots.forEach(spot => {
     const card = document.createElement('div');
-    card.className = 'spot-card';
+    card.className = 'spot-entry-card';
+    const imageSrc = spot.image_url || 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=600&auto=format&fit=crop&q=80';
+
     card.innerHTML = `
-      <div class="spot-card-top">
-        <h3 class="spot-title">${spot.title || 'Driveway Spot'}</h3>
-        <div class="spot-rate">$${spot.hourly_rate}/hr</div>
+      <div class="card-media">
+        <img src="${imageSrc}" alt="${spot.title}">
+        <div class="media-badge-rate">$${spot.hourly_rate}/hr</div>
+        <div class="media-badge-walk">
+          <span class="material-symbols-outlined" style="font-size:0.85rem;">directions_walk</span>
+          ${spot.walking_minutes || 4} min walk
+        </div>
       </div>
-      <div class="spot-address">
-        <span class="material-symbols-outlined" style="font-size:0.9rem; color:var(--text-secondary);">location_on</span>
-        ${spot.address || 'Address unlisted'}
+      <div class="card-details">
+        <div class="card-title-row">
+          <div class="spot-name">${spot.title}</div>
+          <div class="spot-rating">⭐ ${spot.rating || 5.0}</div>
+        </div>
+        <div class="spot-addr">
+          <span class="material-symbols-outlined" style="font-size:0.95rem; color:var(--gray-400);">location_on</span>
+          ${spot.address}
+        </div>
+        <div class="tag-pill-row">
+          ${(spot.features || []).slice(0, 2).map(f => `<span class="tag-pill">${f}</span>`).join('')}
+        </div>
+        <div class="card-action-bar">
+          <button class="btn-book-instant" onclick="openBookingModal('${spot.spot_id}')">Instant Reserve</button>
+          <button class="btn-inspect" onclick="askCopilotAboutSpot('${(spot.title).replace(/'/g, "\\'")}')">Ask AI</button>
+        </div>
       </div>
-      <div class="spot-tags">
-        <span class="tag green">${spot.walking_minutes || 4} min walk</span>
-        <span class="tag">⭐ ${spot.rating || 5.0}</span>
-        ${(spot.features || []).slice(0, 1).map(f => `<span class="tag">${f}</span>`).join('')}
-      </div>
-      <button class="book-quick-btn" onclick="quickBook('${spot.spot_id}', '${(spot.title || '').replace(/'/g, "\\'")}')">Reserve Spot</button>
     `;
     container.appendChild(card);
   });
 }
 
-async function quickBook(spotId, title) {
-  const name = prompt(`Enter your name to reserve ${title} for 2 hours:`, "Alex Walker");
-  if (!name) return;
+function filterSpots() {
+  const q = document.getElementById('spot-search-input').value.toLowerCase();
+  filteredSpots = allSpots.filter(s => {
+    const matchQ = (s.title + ' ' + s.address).toLowerCase().includes(q);
+    const matchPrice = activePriceFilter ? s.hourly_rate <= activePriceFilter : true;
+    const matchFeature = activeFeatureFilter ? (s.features || []).some(f => f.includes(activeFeatureFilter)) : true;
+    return matchQ && matchPrice && matchFeature;
+  });
+  renderCatalog(filteredSpots);
+  updateMapMarkers(filteredSpots);
+}
+
+function setPriceFilter(maxPrice, el) {
+  document.querySelectorAll('.filter-chips-row .chip-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  activePriceFilter = maxPrice;
+  filterSpots();
+}
+
+function filterByFeature(feat, el) {
+  document.querySelectorAll('.filter-chips-row .chip-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  activeFeatureFilter = feat;
+  filterSpots();
+}
+
+// Booking Modal
+function openBookingModal(spotId) {
+  const spot = allSpots.find(s => s.spot_id === spotId);
+  if (!spot) return;
+  activeBookingSpot = spot;
+
+  document.getElementById('modal-spot-name').textContent = spot.title;
+  document.getElementById('modal-spot-addr').textContent = spot.address;
+  calculateModalTotal();
+  document.getElementById('booking-modal').classList.add('open');
+}
+
+function closeBookingModal() {
+  document.getElementById('booking-modal').classList.remove('open');
+}
+
+function calculateModalTotal() {
+  if (!activeBookingSpot) return;
+  const hours = parseInt(document.getElementById('modal-duration').value, 10);
+  const total = (activeBookingSpot.hourly_rate * hours).toFixed(2);
+  document.getElementById('modal-total-price').textContent = `$${total}`;
+}
+
+async function submitModalBooking(ev) {
+  ev.preventDefault();
+  if (!activeBookingSpot) return;
+  const driverName = document.getElementById('modal-driver-name').value;
+  const duration = parseInt(document.getElementById('modal-duration').value, 10);
+
   try {
     const res = await fetch('/api/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ spot_id: spotId, driver_name: name, duration_hours: 2 })
+      body: JSON.stringify({
+        spot_id: activeBookingSpot.spot_id,
+        driver_name: driverName,
+        duration_hours: duration
+      })
     });
     const result = await res.json();
     if (result.success) {
-      alert(`🎉 Reservation Confirmed!\nBooking ID: ${result.booking.booking_id}\nTotal: $${result.booking.total_cost}`);
-      loadSpots();
+      alert(`🎉 Reservation Confirmed!\nBooking ID: ${result.booking.booking_id}\nSpot: ${result.booking.spot_title}\nTotal: $${result.booking.total_cost}`);
+      closeBookingModal();
+      fetchSpots();
     } else {
-      alert(`Booking failed: ${result.error}`);
+      alert(`Booking error: ${result.error}`);
     }
   } catch (err) {
-    alert(`Booking error: ${err.message}`);
+    alert(`Booking failed: ${err.message}`);
   }
 }
 
-/* Owner Portal functions */
+// AI Copilot
+async function handleCopilotSubmit(ev) {
+  ev.preventDefault();
+  const input = document.getElementById('copilot-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendCopilotBubble('user', text);
+  input.value = '';
+
+  const waiting = appendCopilotBubble('agent', 'Analyzing request with Gemini…');
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    });
+    const data = await res.json();
+    const replyText = (data.parts || []).map(p => p.text).filter(Boolean).join('\n') || 'Response processed!';
+    waiting.textContent = replyText;
+    fetchSpots();
+  } catch (err) {
+    waiting.textContent = `Error: ${err.message}`;
+  }
+}
+
+function appendCopilotBubble(who, text) {
+  const feed = document.getElementById('copilot-feed');
+  const bubble = document.createElement('div');
+  bubble.className = `copilot-bubble ${who}`;
+  bubble.textContent = text;
+  feed.appendChild(bubble);
+  feed.scrollTop = feed.scrollHeight;
+  return bubble;
+}
+
+function askCopilotAboutSpot(spotTitle) {
+  const input = document.getElementById('copilot-input');
+  input.value = `Tell me about the ${spotTitle} spot and generate a photo preview.`;
+  document.querySelector('.copilot-form').dispatchEvent(new Event('submit', { cancelable: true }));
+}
+
+// Owner Portal
 async function loadOwnerData() {
-  await loadSpots();
+  await fetchSpots();
   const list = document.getElementById('host-spots-list');
   list.innerHTML = '';
-  cachedSpots.forEach(s => {
+  allSpots.forEach(s => {
     const item = document.createElement('div');
-    item.className = 'my-spot-item';
+    item.className = 'host-spot-item';
     item.innerHTML = `
       <div>
-        <div style="font-weight:700; font-size:0.92rem;">${s.title}</div>
-        <div style="font-size:0.78rem; color:var(--text-secondary);">${s.address}</div>
+        <div class="host-spot-title">${s.title}</div>
+        <div class="host-spot-sub">${s.address}</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-weight:700; color:#15803D;">$${s.hourly_rate}/hr</div>
-        <span class="badge badge-confirmed">Published</span>
+        <div class="host-spot-rate">$${s.hourly_rate}/hr</div>
+        <span class="status-tag available" style="margin-top:4px;">Published</span>
       </div>
     `;
     list.appendChild(item);
   });
 }
 
-async function handleHostSubmit(ev) {
+async function handleOwnerPublish(ev) {
   ev.preventDefault();
   const title = document.getElementById('host-title').value;
   const address = document.getElementById('host-address').value;
-  const hourly_rate = parseFloat(document.getElementById('host-rate').value);
-  const host_name = document.getElementById('host-name').value;
-  const feature = document.getElementById('host-feature').value;
+  const rate = parseFloat(document.getElementById('host-rate').value);
+  const hostName = document.getElementById('host-name').value;
+  const amenity = document.getElementById('host-amenity').value;
 
   try {
     const res = await fetch('/api/spots', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        title, address, hourly_rate, host_name,
-        features: [feature, "Paved Driveway"]
+        title, address, hourly_rate: rate, host_name: hostName,
+        features: [amenity, "Paved Driveway"]
       })
     });
     const result = await res.json();
     if (result.success) {
-      alert(`🎉 Listing Published!\n${title} is now visible to drivers.`);
-      document.getElementById('host-form').reset();
+      alert(`🎉 Driveway published successfully!\n${title} is now discoverable on the marketplace map.`);
+      document.getElementById('owner-publish-form').reset();
       loadOwnerData();
+      fetchSpots();
     }
-  } catch (e) {
-    alert(`Failed to list driveway: ${e.message}`);
+  } catch (err) {
+    alert(`Publish failed: ${err.message}`);
   }
 }
 
-/* Admin Portal functions */
-async function loadAdminData() {
-  await loadSpots();
+// Admin Operations
+async function loadAdminStats() {
+  await fetchSpots();
   try {
     const res = await fetch('/api/bookings');
     const data = await res.json();
-    cachedBookings = data.bookings || [];
+    const bookings = data.bookings || [];
 
-    document.getElementById('stat-spots').textContent = cachedSpots.length;
-    document.getElementById('stat-bookings').textContent = cachedBookings.length;
-    const totalRev = cachedBookings.reduce((sum, b) => sum + (b.total_cost || 0), 0);
-    document.getElementById('stat-revenue').textContent = `$${totalRev.toFixed(2)}`;
+    document.getElementById('kpi-total-spots').textContent = allSpots.length;
+    document.getElementById('kpi-total-bookings').textContent = bookings.length;
+    const rev = bookings.reduce((sum, b) => sum + (b.total_cost || 0), 0);
+    document.getElementById('kpi-total-revenue').textContent = `$${rev.toFixed(2)}`;
 
     // Render bookings table
-    const bTbody = document.getElementById('bookings-tbody');
-    bTbody.innerHTML = '';
-    cachedBookings.forEach(b => {
+    const bTable = document.getElementById('admin-bookings-table');
+    bTable.innerHTML = '';
+    bookings.forEach(b => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-family:monospace; font-size:0.8rem;">${b.booking_id || '-'}</td>
-        <td style="font-weight:600;">${b.spot_title || b.spot_id}</td>
+        <td style="font-family:monospace; font-weight:600;">${b.booking_id || '-'}</td>
+        <td style="font-weight:700;">${b.spot_title || b.spot_id}</td>
         <td>${b.driver_name || 'Driver'}</td>
         <td>${b.duration_hours || 2} hrs</td>
-        <td style="font-weight:700; color:var(--accent);">$${b.total_cost || '0.00'}</td>
-        <td><span class="badge badge-confirmed">${b.status || 'confirmed'}</span></td>
+        <td style="font-weight:800; color:var(--brand-primary);">$${b.total_cost || '0.00'}</td>
+        <td><span class="status-tag confirmed">${b.status || 'confirmed'}</span></td>
       `;
-      bTbody.appendChild(tr);
+      bTable.appendChild(tr);
     });
 
     // Render inventory table
-    const iTbody = document.getElementById('inventory-tbody');
-    iTbody.innerHTML = '';
-    cachedSpots.forEach(s => {
+    const iTable = document.getElementById('admin-inventory-table');
+    iTable.innerHTML = '';
+    allSpots.forEach(s => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-family:monospace; font-size:0.8rem;">${s.spot_id}</td>
-        <td style="font-weight:600;">${s.title}</td>
+        <td style="font-family:monospace;">${s.spot_id}</td>
+        <td style="font-weight:700;">${s.title}</td>
         <td>${s.address}</td>
-        <td style="font-weight:700;">$${s.hourly_rate}/hr</td>
-        <td><span class="badge badge-active">${s.available_now ? 'Available' : 'Booked'}</span></td>
+        <td style="font-weight:800; color:var(--emerald-600);">$${s.hourly_rate}/hr</td>
+        <td><span class="status-tag available">${s.available_now ? 'Available' : 'Booked'}</span></td>
       `;
-      iTbody.appendChild(tr);
+      iTable.appendChild(tr);
     });
-  } catch (e) {
-    console.error("Failed to load admin data:", e);
+  } catch (err) {
+    console.error("Admin stats fetch failed:", err);
   }
 }
 
-/* ----------------------------------------------------
- * CHAT & A2UI RENDERER
- * -------------------------------------------------- */
-function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
-function bubble(who) {
-  const m = el("div", "msg " + who);
-  const b = el("div", "bubble");
-  m.appendChild(b); log.appendChild(m); log.scrollTop = log.scrollHeight;
-  return b;
-}
-
-function sendPrompt(txt) {
-  chatInput.value = txt;
-  chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
-}
-
-function boundStr(v) {
-  if (v == null) return "";
-  if (typeof v === "string") return v;
-  if (typeof v.literalString === "string") return v.literalString;
-  return "";
-}
-
-function childIds(props) {
-  const ids = [];
-  if (props && typeof props.child === "string") ids.push(props.child);
-  const ch = props && props.children;
-  if (ch && Array.isArray(ch.explicitList)) for (const c of ch.explicitList) if (typeof c === "string") ids.push(c);
-  return ids;
-}
-
-function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
-
-function buildNode(id, comps, seen) {
-  if (!id || seen.has(id)) return null;
-  seen.add(id);
-  const spec = comps[id];
-  if (!spec || typeof spec !== "object") return null;
-  const type = Object.keys(spec)[0];
-  const props = spec[type] || {};
-  const kids = () => childIds(props).map(cid => buildNode(cid, comps, seen)).filter(Boolean);
-
-  switch (type) {
-    case "Card": {
-      const d = el("div", "a2card"); kids().forEach(n => d.appendChild(n)); return d;
-    }
-    case "Column":
-    case "List": {
-      const horizontal = type === "List" && props.direction === "horizontal";
-      const d = el("div", horizontal ? "a2row" : "a2col"); kids().forEach(n => d.appendChild(n)); return d;
-    }
-    case "Row": {
-      const d = el("div", "a2row" + (props.distribution === "spaceBetween" ? " between" : ""));
-      kids().forEach(n => d.appendChild(n)); return d;
-    }
-    case "Text": {
-      const t = el("div", "a2text");
-      const hint = String(props.usageHint || "body").toLowerCase();
-      if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
-      else if (hint === "caption") t.classList.add("a2-caption");
-      t.textContent = boundStr(props.text);
-      return t;
-    }
-    case "Divider":
-      return el("hr", "a2divider");
-    case "Image": {
-      const src = boundStr(props.url || props.src);
-      if (!/^https?:\/\//i.test(src)) return null;
-      const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
-    }
-    case "Icon": {
-      const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
-    }
-    default:
-      return null;
-  }
-}
-
-function renderSurface(messages, container) {
-  const comps = {};
-  const roots = [];
-  for (const m of messages) {
-    if (m.beginRendering && typeof m.beginRendering.root === "string") roots.push(m.beginRendering.root);
-    const su = m.surfaceUpdate;
-    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
-  }
-  let rootIds = roots.filter(r => comps[r]);
-  if (rootIds.length === 0) {
-    const referenced = new Set();
-    for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
-    rootIds = Object.keys(comps).filter(id => !referenced.has(id));
-  }
-  let drew = false;
-  for (const rid of rootIds) { const node = buildNode(rid, comps, new Set()); if (node) { container.appendChild(node); drew = true; } }
-  return drew;
-}
-
-function flattenText(messages) {
-  const out = [];
-  for (const m of messages) {
-    const su = m.surfaceUpdate;
-    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
-  }
-  return out.join("\n").trim();
-}
-
-function renderReply(b, parts) {
-  b.textContent = "";
-  const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
-  const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
-
-  const textStr = texts.join("\n").trim();
-  if (textStr) b.appendChild(el("div", null, textStr));
-
-  if (a2ui.length) {
-    b.classList.add("rich");
-    if (!renderSurface(a2ui, b)) b.appendChild(el("div", null, flattenText(a2ui) || "(no card content)"));
-  }
-  if (!b.childNodes.length) b.textContent = "(no response)";
-  log.scrollTop = log.scrollHeight;
-}
-
-async function handleChatSubmit(ev) {
-  ev.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
-  bubble("user").textContent = text;
-  chatInput.value = "";
-  const b = bubble("agent"); b.textContent = "…";
-  try {
-    const res = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
-    const raw = await res.text();
-    let data;
-    try { data = JSON.parse(raw); }
-    catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
-    renderReply(b, data.parts || []);
-    loadSpots();
-  } catch (e) {
-    b.textContent = "Error: " + e.message;
-  }
-}
-
-// Initial bootstrap
-loadSpots();
+// App Launch
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  fetchSpots();
+});
 </script>
 </body>
 </html>
