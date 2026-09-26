@@ -44,6 +44,14 @@ from a2a.types import (
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from google.cloud import firestore
+
+PROJECT_ID = "qwiklabs-gcp-03-241dd311c4eb"
+COLLECTION_NAME = "parking_spots"
+BOOKINGS_COLLECTION = "parking_bookings"
+
+def _get_firestore():
+    return firestore.Client(project=PROJECT_ID)
 
 RESOURCE = os.environ["AGENT_ENGINE_RESOURCE_NAME"]
 # The agent's app directory (matches agent_directory in agents-cli-manifest.yaml).
@@ -190,7 +198,121 @@ async def chat(req: Request):
     return JSONResponse({"parts": parts})
 
 
-# Serve the chat UI (keep this mount last so /chat wins).
+@app.get("/api/spots")
+async def get_spots():
+    """Retrieve all parking spots for User, Owner, and Admin views."""
+    try:
+        db = _get_firestore()
+        docs = db.collection(COLLECTION_NAME).stream()
+        spots = []
+        for doc in docs:
+            d = doc.to_dict()
+            d["spot_id"] = doc.id
+            spots.append(d)
+        return JSONResponse({"spots": spots})
+    except Exception as e:
+        return JSONResponse({"error": str(e), "spots": []}, status_code=500)
+
+
+@app.get("/api/bookings")
+async def get_bookings():
+    """Retrieve all bookings for User history and Admin tracking."""
+    try:
+        db = _get_firestore()
+        docs = db.collection(BOOKINGS_COLLECTION).stream()
+        bookings = []
+        for doc in docs:
+            b = doc.to_dict()
+            b["booking_id"] = doc.id
+            bookings.append(b)
+        # sort descending by created_at if present
+        bookings.sort(key=lambda x: str(x.get("created_at", "")), reverse=True)
+        return JSONResponse({"bookings": bookings})
+    except Exception as e:
+        return JSONResponse({"error": str(e), "bookings": []}, status_code=500)
+
+
+@app.post("/api/spots")
+async def create_spot(req: Request):
+    """Enable driveway homeowners to list their spot directly from the Owner portal."""
+    try:
+        data = await req.json()
+        title = data.get("title", "").strip()
+        address = data.get("address", "").strip()
+        hourly_rate = float(data.get("hourly_rate", 8.0))
+        host_name = data.get("host_name", "Homeowner").strip()
+        features = data.get("features", ["Paved Driveway"])
+        image_url = data.get("image_url", "https://storage.googleapis.com/spotnest-driveways-qwiklabs-gcp-03-241dd311c4eb/spotnest_preview.mp4")
+
+        slug = "".join(c if c.isalnum() else "_" for c in title.lower()).strip("_")
+        spot_id = f"{slug}_{int(uuid.uuid4().hex[:6], 16)}"
+
+        new_spot = {
+            "spot_id": spot_id,
+            "title": title,
+            "address": address,
+            "hourly_rate": hourly_rate,
+            "rating": 5.0,
+            "reviews_count": 0,
+            "match_percent": 98,
+            "walking_minutes": 3,
+            "distance_miles": 0.2,
+            "available_now": True,
+            "host_name": host_name,
+            "owner": {"name": host_name, "verified": True, "rating": 5.0},
+            "features": features,
+            "image_url": image_url,
+            "dimensions": "Standard / Large SUV & EV Friendly",
+            "created_at": str(uuid.uuid4()),
+        }
+
+        db = _get_firestore()
+        db.collection(COLLECTION_NAME).document(spot_id).set(new_spot)
+        return JSONResponse({"success": True, "spot": new_spot})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.post("/api/bookings")
+async def create_booking(req: Request):
+    """Enable drivers to book directly from the User interface."""
+    try:
+        data = await req.json()
+        spot_id = data.get("spot_id")
+        driver_name = data.get("driver_name", "Driver").strip()
+        duration_hours = int(data.get("duration_hours", 2))
+
+        db = _get_firestore()
+        doc = db.collection(COLLECTION_NAME).document(spot_id).get()
+        if not doc.exists:
+            return JSONResponse({"error": "Spot not found"}, status_code=404)
+        spot_data = doc.to_dict()
+
+        hourly_rate = float(spot_data.get("hourly_rate", 8.0))
+        total_cost = round(hourly_rate * duration_hours, 2)
+        booking_id = f"book_{spot_id}_{uuid.uuid4().hex[:6]}"
+
+        booking_record = {
+            "booking_id": booking_id,
+            "spot_id": spot_id,
+            "spot_title": spot_data.get("title", "Driveway Spot"),
+            "address": spot_data.get("address", ""),
+            "driver_name": driver_name,
+            "duration_hours": duration_hours,
+            "hourly_rate": hourly_rate,
+            "total_cost": total_cost,
+            "start_time": "Immediate",
+            "status": "confirmed",
+            "created_at": str(uuid.uuid4()),
+        }
+
+        db.collection(BOOKINGS_COLLECTION).document(booking_id).set(booking_record)
+        return JSONResponse({"success": True, "booking": booking_record})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# Serve the chat UI (keep this mount last so /chat and /api win).
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 
