@@ -2,6 +2,11 @@
 
 > A peer-to-peer neighborhood parking concierge connecting homeowners with unused driveways and carports to drivers looking for convenient, affordable parking.
 
+<div align="center">
+  <img src="spotnest_demo.gif" alt="Spotnest AI Driveway Demo" width="600" />
+  <p><em>AI-generated driveway parking simulation powered by <code>gemini-omni-flash-preview</code></em></p>
+</div>
+
 Built with Google's **Agent Development Kit (ADK)** and `agents-cli`, deployed on **Agent Platform**, and served via an A2A chat interface.
 
 ---
